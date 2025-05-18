@@ -13,7 +13,7 @@ const EstimadorRenovable = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    axios.get("https://bootcam-api.onrender.com/paises")
+    axios.get(`${process.env.REACT_APP_API_URL}/paises`)
       .then(res => {
         setPaises(res.data);
       })
@@ -22,7 +22,8 @@ const EstimadorRenovable = () => {
 
   const calcular = async () => {
     try {
-      const res = await axios.post("https://bootcam-api.onrender.com/calcular-renovable", {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/calcular-renovable`,
+         {
         pais: pais,
         anio: parseInt(anio),
         consumo_kwh: parseFloat(consumo)
