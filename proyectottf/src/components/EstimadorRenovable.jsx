@@ -8,31 +8,28 @@ const EstimadorRenovable = () => {
   const [anio, setAnio] = useState("2021");
   const [consumo, setConsumo] = useState("");
   const [resultado, setResultado] = useState(null);
-  const [resultado1, setResultado1] = useState(null);
-  const [resultado2, setResultado2] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_URL}/paises`)
-      .then(res => {
-        setPaises(res.data);
-      })
+      .then(res => setPaises(res.data))
       .catch(() => setError("Error cargando países"));
   }, []);
 
   const calcular = async () => {
     try {
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/calcular-renovable`,
-         {
-        pais: pais,
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/calcular-renovable`, {
+        pais,
         anio: parseInt(anio),
         consumo_kwh: parseFloat(consumo)
       });
-      setResultado(res.data.proporcion_renovable.toFixed(8));
-      setResultado1(res.data.consumo_renovable_estimado.toFixed(8));
-      setResultado2(res.data.porcentaje_estimado.toFixed(8));
+      setResultado({
+        proporcion: res.data.proporcion_renovable,
+        consumo_renovable: res.data.consumo_renovable_estimado,
+        porcentaje: res.data.porcentaje_estimado
+      });
       setError("");
-    } catch (err) {
+    } catch {
       setResultado(null);
       setError("Error al calcular. Verifica los datos.");
     }
@@ -42,6 +39,7 @@ const EstimadorRenovable = () => {
     <div className="container py-5 d-flex justify-content-center">
       <div className="card shadow p-4" style={{ maxWidth: "600px", width: "100%" }}>
         <h2 className="mb-4 text-center text-success">💡 Estimador de Energía Renovable</h2>
+
         <div className="mb-3">
           <label className="form-label fw-bold">🌍 País</label>
           <select className="form-select" value={pais} onChange={e => setPais(e.target.value)}>
@@ -82,19 +80,22 @@ const EstimadorRenovable = () => {
 
         {resultado && (
           <div className="alert alert-info mt-4 text-center">
-            <strong>{resultado}%</strong> de tu consumo podría cubrirse con energía renovables<br/>
-            <strong>{resultado1}Kw</strong> estimado de tu consumo<br/>
-            <strong>{resultado2}%</strong> estimado de tu consumo a futuro<br/>
+            <p>🔋 Energía renovable estimada: <strong>{resultado.consumo_renovable.toFixed(2)} kWh</strong></p>
+            <p>🔄 Porcentaje renovable del consumo: <strong>{resultado.porcentaje.toFixed(2)}%</strong></p>
+            <p>📊 Proporción base renovable del país: <strong>{resultado.proporcion.toFixed(4)}</strong></p>
           </div>
         )}
 
         {error && (
           <div className="alert alert-danger mt-4 text-center">{error}</div>
         )}
-        <Link to="/" className="btn btn-primary">
+
+        <div className="d-grid mt-3">
+          <Link to="/" className="btn btn-primary">
             Regresar
-      </Link>
-      </div>      
+          </Link>
+        </div>
+      </div>
     </div>
   );
 };

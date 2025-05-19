@@ -53,10 +53,10 @@ def listar_paises():
             paises.update(df['Entity'].dropna().unique())
     return sorted(paises)
 
-# --- ENDPOINT DE CALCULO ---
+# --- ENDPOINT DE CÁLCULO ACTUALIZADO ---
 @app.post("/calcular-renovable", response_model=CalculoOutput)
 def calcular_renovable(datos: CalculoInput):
-    total_renovable = 0.0
+    total_renovable_twh = 0.0
     for df in data.values():
         if 'Entity' not in df.columns or 'Year' not in df.columns:
             continue
@@ -64,26 +64,30 @@ def calcular_renovable(datos: CalculoInput):
         df_filtrado = df[(df['Entity'] == datos.pais) & (df['Year'] == datos.anio)]
 
         if not df_filtrado.empty:
-            # Busca una columna numérica que represente consumo o capacidad
             for col in df_filtrado.columns:
                 if col not in ['Entity', 'Year'] and pd.api.types.is_numeric_dtype(df_filtrado[col]):
                     valor = df_filtrado[col].values[0]
                     if pd.notna(valor):
-                        total_renovable += valor
+                        total_renovable_twh += valor
                         break
 
-    if total_renovable == 0:
+    if total_renovable_twh == 0:
         raise HTTPException(status_code=404, detail="Datos insuficientes para el cálculo")
 
-    proporcion = total_renovable / 100  
+    # Conversión de TWh a kWh
+    total_renovable_kwh = total_renovable_twh * 1_000_000_000
+
+    # Calcular proporción y resultados
+    proporcion = total_renovable_kwh / datos.consumo_kwh
     consumo_renovable = proporcion * datos.consumo_kwh
-    porcentaje = (consumo_renovable / datos.consumo_kwh) * 100 if datos.consumo_kwh > 0 else 0.0
+    porcentaje = (consumo_renovable / datos.consumo_kwh) * 100
 
     return CalculoOutput(
         proporcion_renovable=proporcion,
         consumo_renovable_estimado=consumo_renovable,
         porcentaje_estimado=porcentaje
     )
+
 @app.get("/generar-graficos")
 def generar_graficos():
     try:
