@@ -4,19 +4,21 @@ from pydantic import BaseModel
 import pandas as pd
 import os
 from typing import List
-from generar_graficos import generar_todos_los_graficos
+from generar_graficos import generar_graficos_animados  # import correcto
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 CSV_DIR = "csv"
+OUTPUT_DIR = "C:\\Users\\Danny\\Desktop\\bootcam\\ProyectoPrueba\\proyectottf\\public\\gifs"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 csv_files = {
     "solar": "12 solar-energy-consumption.csv",
@@ -26,7 +28,6 @@ csv_files = {
 }
 
 data = {}
-
 for key, filename in csv_files.items():
     path = os.path.join(CSV_DIR, filename)
     try:
@@ -39,6 +40,10 @@ class CalculoInput(BaseModel):
     pais: str
     anio: int
     consumo_kwh: float
+
+class GraficosInput(BaseModel):
+    pais: str
+    anio: int
 
 class CalculoOutput(BaseModel):
     proporcion_renovable: float
@@ -53,7 +58,6 @@ def listar_paises():
             paises.update(df['Entity'].dropna().unique())
     return sorted(paises)
 
-# --- ENDPOINT DE CÁLCULO ACTUALIZADO ---
 @app.post("/calcular-renovable", response_model=CalculoOutput)
 def calcular_renovable(datos: CalculoInput):
     total_renovable_twh = 0.0
@@ -62,7 +66,6 @@ def calcular_renovable(datos: CalculoInput):
             continue
 
         df_filtrado = df[(df['Entity'] == datos.pais) & (df['Year'] == datos.anio)]
-
         if not df_filtrado.empty:
             for col in df_filtrado.columns:
                 if col not in ['Entity', 'Year'] and pd.api.types.is_numeric_dtype(df_filtrado[col]):
@@ -74,10 +77,7 @@ def calcular_renovable(datos: CalculoInput):
     if total_renovable_twh == 0:
         raise HTTPException(status_code=404, detail="Datos insuficientes para el cálculo")
 
-    # Conversión de TWh a kWh
     total_renovable_kwh = total_renovable_twh * 1_000_000_000
-
-    # Calcular proporción y resultados
     proporcion = total_renovable_kwh / datos.consumo_kwh
     consumo_renovable = proporcion * datos.consumo_kwh
     porcentaje = (consumo_renovable / datos.consumo_kwh) * 100
@@ -88,12 +88,10 @@ def calcular_renovable(datos: CalculoInput):
         porcentaje_estimado=porcentaje
     )
 
-@app.get("/generar-graficos")
-def generar_graficos():
+@app.post("/generar-graficos")
+def generar_graficos(data: GraficosInput):
     try:
-        output_path = os.path.join("D:\\TalentoTech\\Repos\\proyectottf\\public\\gifs\\")
-        os.makedirs(output_path, exist_ok=True)
-        generar_todos_los_graficos(output_path)
-        return {"message": "Gráficos generados exitosamente."}
+        generar_graficos_animados(data.pais, data.anio, OUTPUT_DIR)
+        return {"message": "Gráficos animados generados correctamente"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
