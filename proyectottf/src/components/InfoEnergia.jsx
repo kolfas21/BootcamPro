@@ -13,20 +13,32 @@ const InfoEnergia = () => {
       {/* Hero */}
 <section
   className="relative min-h-screen flex items-center justify-center text-white px-6"
-  style={{ backgroundImage: "url('/Sarnia_Solar-09.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}
+  style={{
+    backgroundImage: "url('/Sarnia_Solar-09.jpg')",
+    backgroundSize: "cover",
+    backgroundPosition: "center"
+  }}
 >
   {/* Capa oscura con degradado */}
   <div className="absolute inset-0 bg-gradient-to-br from-green-900/80 via-green-800/70 to-green-900/90 z-0" />
 
   {/* Contenido */}
-  <div className="relative z-10 text-center max-w-3xl" data-aos="fade-up">
+  <div className="relative z-10 text-center max-w-5xl w-full" data-aos="fade-up">
+    {/* Logo más protagonista */}
+    <div className="mb-2 animate-bounce-slow">
+      <img src="icono.png" alt="Eco Logo" className="mx-auto w-50 md:w-40 drop-shadow-xl" />
+    </div>
+
     <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6 drop-shadow-lg">
       Aprovecha el Poder del Sol <br /> para un Mañana Sostenible
     </h1>
+
     <p className="text-lg md:text-xl text-green-100 mb-10 drop-shadow-sm">
       Energía solar limpia, accesible y eficiente para transformar tu vida y cuidar el planeta.
     </p>
-    <div className="flex flex-wrap justify-center gap-4">
+
+    {/* Botones */}
+    <div className="flex flex-wrap justify-center gap-4 mb-14">
       <Link
         to="/estimador"
         className="bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-xl shadow-lg transition-transform hover:scale-105 font-semibold"
@@ -40,31 +52,93 @@ const InfoEnergia = () => {
         Ver estadísticas
       </Link>
     </div>
+
+    {/* Tarjetas informativas */}
+<div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+  {[
+    {
+      title: "Ahorro Económico",
+      description: "Reduce tu factura de energía hasta en un 70% desde el primer mes.",
+      icon: "💰"
+    },
+    {
+      title: "Energía Limpia",
+      description: "Contribuye a un mundo más limpio usando una fuente inagotable: el sol.",
+      icon: "🌱"
+    },
+    {
+      title: "Valor a tu Propiedad",
+      description: "Los hogares con paneles solares aumentan su valor de mercado.",
+      icon: "🏡"
+    }
+  ].map(({ title, description, icon }, index) => (
+    <div
+      key={index}
+      className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-md hover:scale-105 transform transition-transform duration-300 flex flex-col items-center text-center"
+      data-aos="zoom-in"
+      data-aos-delay={index * 100}
+    >
+      <div className="w-14 h-14 flex items-center justify-center bg-green-600 rounded-full mb-4 text-2xl shadow-lg">
+        {icon}
+      </div>
+      <h3 className="text-xl font-bold mb-2">{title}</h3>
+      <p className="text-green-100">{description}</p>
+    </div>
+  ))}
+</div>
   </div>
 </section>
 
       {/* Beneficios */}
       <section className="py-20 bg-green-50">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold text-green-700 mb-10" data-aos="fade-up">Beneficios de la Energía Solar</h2>
-          <div className="grid md:grid-cols-4 gap-8" data-aos="fade-up" data-aos-delay="200">
-            {[
-              { title: "Energía Inagotable", icon: "☀️" },
-              { title: "Reducción de Costos", icon: "💰" },
-              { title: "Cero Emisiones", icon: "🌱" },
-              { title: "Fácil Instalación", icon: "🔧" },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="bg-white/70 backdrop-blur-md border border-white/30 rounded-2xl p-6 shadow-lg hover:scale-105 transition-transform"
-              >
-                <div className="text-4xl mb-4">{item.icon}</div>
-                <h3 className="text-xl font-semibold text-green-700">{item.title}</h3>
-              </div>
-            ))}
+  <div className="max-w-6xl mx-auto px-6 text-center">
+    <h2 className="text-4xl font-bold text-green-700 mb-16" data-aos="fade-up">
+      Beneficios de la Energía Solar
+    </h2>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-8" data-aos="fade-up" data-aos-delay="200">
+      {[
+        { title: "Energía Inagotable", icon: "☀️", percent: 100 },
+        { title: "Reducción de Costos", icon: "💰", percent: 70 },
+        { title: "Cero Emisiones", icon: "🌱", percent: 90 },
+        { title: "Fácil Instalación", icon: "🔧", percent: 80 },
+      ].map((item, i) => (
+        <div key={i} className="flex flex-col items-center">
+          {/* Círculo con animación */}
+          <div className="relative w-32 h-32 mb-4">
+            <svg className="transform -rotate-90 w-full h-full">
+              <circle
+                cx="50%"
+                cy="50%"
+                r="45"
+                stroke="#d1fae5"
+                strokeWidth="10"
+                fill="none"
+              />
+              <circle
+                cx="50%"
+                cy="50%"
+                r="45"
+                stroke="#10b981"
+                strokeWidth="10"
+                fill="none"
+                strokeDasharray="282.6"
+                strokeDashoffset={`${282.6 - (282.6 * item.percent) / 100}`}
+                strokeLinecap="round"
+                className="transition-all duration-1000 ease-out"
+              />
+            </svg>
+            {/* Icono y porcentaje al centro */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-green-700">
+              <div className="text-2xl">{item.icon}</div>
+              <div className="text-lg font-semibold">{item.percent}%</div>
+            </div>
           </div>
+          <h3 className="text-lg font-semibold text-green-700">{item.title}</h3>
         </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
 
       {/* ¿Cómo funciona? */}
       <section className="py-20 bg-white">

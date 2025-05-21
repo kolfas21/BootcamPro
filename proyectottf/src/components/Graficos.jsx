@@ -25,7 +25,7 @@ const Graficos = () => {
   const graficos = [
     {
       nombre: "Producción de Energía Renovable por Fuente",
-      archivo: "/gifs/top10_renovables_2022.gif",
+      archivo: "/gifs/grafico_barras_renovables.gif",
     },
     {
       nombre: "Participación de Energías Renovables",
@@ -33,11 +33,11 @@ const Graficos = () => {
     },
     {
       nombre: "Crecimiento de Energía Solar Global",
-      archivo: "/gifs/solar_growth.gif",
+      archivo: "/gifs/grafico_area_renovables.gif",
     },
     {
       nombre: "Comparativa Global de Fuentes de Energía",
-      archivo: "/gifs/comparativa_energias.gif",
+      archivo: "/gifs/grafico_lineas_renovables.gif",
     },
   ];
 
