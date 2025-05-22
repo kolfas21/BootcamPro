@@ -17,7 +17,7 @@ app.add_middleware(
 )
 
 CSV_DIR = "csv"
-OUTPUT_DIR = "C:\\Users\\Danny\\Desktop\\bootcam\\ProyectoPrueba\\proyectottf\\public\\gifs"
+OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "public", "gifs")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 csv_files = {
