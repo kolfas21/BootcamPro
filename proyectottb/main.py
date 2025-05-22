@@ -21,7 +21,10 @@ OUTPUT_DIR = "C:\\Users\\Danny\\Desktop\\bootcam\\ProyectoPrueba\\proyectottf\\p
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 csv_files = {
+
     "solar": "12 solar-energy-consumption.csv",
+    "solar": "04 share-electricity-renewables.csv",
+
     "wind": "08 wind-generation.csv",
     "hydro": "05 hydropower-consumption.csv",
     "geothermal": "17 installed-geothermal-capacity.csv"
@@ -88,10 +91,12 @@ def calcular_renovable(datos: CalculoInput):
         porcentaje_estimado=porcentaje
     )
 
-@app.post("/generar-graficos")
-def generar_graficos(data: GraficosInput):
+@app.get("/generar-graficos")
+def generar_graficos():
     try:
-        generar_graficos_animados(data.pais, data.anio, OUTPUT_DIR)
-        return {"message": "Gráficos animados generados correctamente"}
+        output_path = os.path.join("D:\\TalentoTech\\Repos\\proyectottf\\public\\gifs\\")
+        os.makedirs(output_path, exist_ok=True)
+        generar_todos_los_graficos(output_path)
+        return {"message": "Gráficos generados exitosamente."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
