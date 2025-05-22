@@ -10,7 +10,7 @@ const Renovable = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get("http://localhost:8000/paises")
+    axios.get("https://bootcam-api.onrender.com/paises")
       .then(res => setPaises(res.data))
       .catch(console.error);
   }, []);
@@ -19,7 +19,7 @@ const Renovable = () => {
     setError(null);
     setResultado(null);
 
-    axios.post("http://localhost:8000/calcular-renovable", {
+    axios.post("https://bootcam-api.onrender.com/calcular-renovable", {
       pais,
       anio: Number(anio),
       consumo_kwh: Number(consumo)
