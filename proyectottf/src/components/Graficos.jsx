@@ -29,11 +29,14 @@ const Graficos = () => {
   const [anio, setAnio] = useState(new Date().getFullYear());
   const [mensaje, setMensaje] = useState(null);
   const [error, setError] = useState(null);
+  const [cargando, setCargando] = useState(false);
+  const [mostrarGraficos, setMostrarGraficos] = useState(false); // NUEVO
 
   const API_URL = "https://bootcam-api.onrender.com";
 
   useEffect(() => {
-    axios.get(`${API_URL}/paises`)
+    axios
+      .get(`${API_URL}/paises`)
       .then((res) => setPaises(res.data))
       .catch(() => setError("Error al cargar países"));
   }, []);
@@ -41,34 +44,40 @@ const Graficos = () => {
   const enviarFormulario = async () => {
     setMensaje(null);
     setError(null);
+    setCargando(true);
+    setMostrarGraficos(false); // OCULTAR GRÁFICOS ANTERIORES
+
     try {
       const res = await axios.post(`${API_URL}/generar-graficos`, {
         pais,
         anio: Number(anio),
       });
       setMensaje(res.data.message || "Gráficos generados correctamente.");
+      setMostrarGraficos(true); // MOSTRAR GRÁFICOS NUEVAMENTE
     } catch (err) {
       const msg = err.response?.data?.detail || "Error al generar gráficos";
       setError(msg);
+    } finally {
+      setCargando(false);
     }
   };
 
   const graficos = [
     {
       nombre: "Producción de Energía Renovable por Fuente",
-      archivo: `${API_URL}/gifs/grafico_barras_renovables.gif`,
+      archivo: "https://bootcam-api.onrender.com/gifs/grafico_barras_renovables.gif",
     },
     {
       nombre: "Participación de Energías Renovables",
-      archivo: `${API_URL}/gifs/grafico_torta_renovables.gif`,
+      archivo: "https://bootcam-api.onrender.com/gifs/grafico_torta_renovables.gif",
     },
     {
       nombre: "Crecimiento de Energía Solar Global",
-      archivo: `${API_URL}/gifs/grafico_area_renovables.gif`,
+      archivo: "https://bootcam-api.onrender.com/gifs/grafico_area_renovables.gif",
     },
     {
       nombre: "Comparativa Global de Fuentes de Energía",
-      archivo: `${API_URL}/gifs/grafico_lineas_renovables.gif`,
+      archivo: "https://bootcam-api.onrender.com/gifs/grafico_lineas_renovables.gif",
     },
   ];
 
@@ -112,7 +121,9 @@ const Graficos = () => {
             >
               <option value="">Selecciona un país</option>
               {paises.map((p) => (
-                <option key={p} value={p}>{p}</option>
+                <option key={p} value={p}>
+                  {p}
+                </option>
               ))}
             </select>
           </div>
@@ -148,45 +159,79 @@ const Graficos = () => {
 
       {/* Carrusel de gráficos */}
       <div className="w-full max-w-6xl mx-auto px-4 relative mb-20">
-        <Slider {...settings}>
-          {graficos.map((grafico, index) => (
-            <div key={index} className="px-4">
-              <div className="bg-white rounded-2xl shadow-xl overflow-hidden w-full hover:scale-[1.02] transition-transform duration-300">
-                <img
-                  src={grafico.archivo}
-                  alt={grafico.nombre}
-                  className="w-full h-[580px] object-contain rounded-t-2xl"
-                />
-                <div className="p-5 text-center">
-                  <h2 className="text-xl font-bold text-green-800">{grafico.nombre}</h2>
+        {cargando ? (
+          <div className="w-full flex justify-center items-center h-[580px]">
+            <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-green-600 border-solid"></div>
+          </div>
+        ) : (
+          mostrarGraficos && (
+            <Slider {...settings}>
+              {graficos.map((grafico, index) => (
+                <div key={index} className="px-4">
+                  <div className="bg-white rounded-2xl shadow-xl overflow-hidden w-full hover:scale-[1.02] transition-transform duration-300">
+                    <img
+                      src={grafico.archivo}
+                      alt={grafico.nombre}
+                      className="w-full h-[580px] object-contain rounded-t-2xl"
+                    />
+                    <div className="p-5 text-center">
+                      <h2 className="text-xl font-bold text-green-800">{grafico.nombre}</h2>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
-        </Slider>
+              ))}
+            </Slider>
+          )
+        )}
       </div>
 
       {/* Sección educativa */}
       <div className="mt-16 max-w-5xl mx-auto text-center px-4">
-        <h2 className="text-3xl font-bold text-green-700 mb-6">¿Por qué es importante la Energía Renovable?</h2>
+        <h2 className="text-3xl font-bold text-green-700 mb-6">
+          ¿Por qué es importante la Energía Renovable?
+        </h2>
         <p className="text-gray-600 mb-10 max-w-2xl mx-auto">
           Las energías renovables como la solar, eólica e hidroeléctrica son claves para un futuro más limpio. Aquí te mostramos sus beneficios más destacados:
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Cards */}
           {[
-            { icon: "🌍", titulo: "Reducción de CO₂", texto: "Ayuda a combatir el cambio climático reduciendo la huella de carbono global." },
-            { icon: "🔋", titulo: "Sostenibilidad", texto: "Son fuentes inagotables que aseguran energía a largo plazo sin agotar recursos." },
-            { icon: "🤝", titulo: "Impacto social", texto: "Generan empleos verdes y promueven el desarrollo económico en comunidades locales." },
-            { icon: "💡", titulo: "Innovación", texto: "Impulsan avances tecnológicos que transforman la industria energética global." },
+            {
+              icon: "🌍",
+              titulo: "Reducción de CO₂",
+              texto:
+                "Ayuda a combatir el cambio climático reduciendo la huella de carbono global.",
+            },
+            {
+              icon: "🔋",
+              titulo: "Sostenibilidad",
+              texto:
+                "Son fuentes inagotables que aseguran energía a largo plazo sin agotar recursos.",
+            },
+            {
+              icon: "🤝",
+              titulo: "Impacto social",
+              texto:
+                "Generan empleos verdes y promueven el desarrollo económico en comunidades locales.",
+            },
+            {
+              icon: "💡",
+              titulo: "Innovación",
+              texto:
+                "Impulsan avances tecnológicos que transforman la industria energética global.",
+            },
           ].map((item, i) => (
-            <div key={i} className="bg-white rounded-2xl shadow-xl p-6 flex items-start gap-4 transition-transform duration-300 hover:-translate-y-1">
+            <div
+              key={i}
+              className="bg-white rounded-2xl shadow-xl p-6 flex items-start gap-4 transition-transform duration-300 hover:-translate-y-1"
+            >
               <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-2xl shadow-inner">
                 {item.icon}
               </div>
               <div className="text-left">
-                <h3 className="text-xl font-semibold text-green-800 mb-1">{item.titulo}</h3>
+                <h3 className="text-xl font-semibold text-green-800 mb-1">
+                  {item.titulo}
+                </h3>
                 <p className="text-gray-600">{item.texto}</p>
               </div>
             </div>
