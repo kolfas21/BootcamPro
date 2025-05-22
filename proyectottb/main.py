@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import pandas as pd
 import os
@@ -7,6 +8,13 @@ from typing import List
 from generar_graficos import generar_graficos_animados  # import correcto
 
 app = FastAPI()
+
+CSV_DIR = "csv"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DIR = os.path.join(BASE_DIR, "gifs")
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+app.mount("/gifs", StaticFiles(directory=OUTPUT_DIR), name="gifs")
 
 app.add_middleware(
     CORSMiddleware,
@@ -16,16 +24,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-CSV_DIR = "csv"
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-OUTPUT_DIR = os.path.join(BASE_DIR, "gifs")
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+# Montar la carpeta gifs para servir archivos estáticos
+app.mount("/gifs", StaticFiles(directory=OUTPUT_DIR), name="gifs")
 
 csv_files = {
-
-    "solar": "12 solar-energy-consumption.csv",
     "solar": "04 share-electricity-renewables.csv",
-
     "wind": "08 wind-generation.csv",
     "hydro": "05 hydropower-consumption.csv",
     "geothermal": "17 installed-geothermal-capacity.csv"
@@ -44,10 +47,6 @@ class CalculoInput(BaseModel):
     pais: str
     anio: int
     consumo_kwh: float
-
-class GraficosInput(BaseModel):
-    pais: str
-    anio: int
 
 class CalculoOutput(BaseModel):
     proporcion_renovable: float
@@ -96,11 +95,9 @@ class GraficosInput(BaseModel):
     pais: str
     anio: int
 
-
 @app.get("/listar-graficos")
 def listar_graficos():
-    import os
-    directorio = "graficos_generados"
+    directorio = OUTPUT_DIR
     archivos = os.listdir(directorio)
     return [
         {
