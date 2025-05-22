@@ -24,21 +24,21 @@ const NextArrow = (props) => (
 const Graficos = () => {
   const graficos = [
     {
-      nombre: "Producción de Energía Renovable por Fuente",
-      archivo: "/gifs/grafico_barras_renovables.gif",
-    },
-    {
-      nombre: "Participación de Energías Renovables",
-      archivo: "/gifs/grafico_torta_renovables.gif",
-    },
-    {
-      nombre: "Crecimiento de Energía Solar Global",
-      archivo: "/gifs/grafico_area_renovables.gif",
-    },
-    {
-      nombre: "Comparativa Global de Fuentes de Energía",
-      archivo: "/gifs/grafico_lineas_renovables.gif",
-    },
+    nombre: "Producción de Energía Renovable por Fuente",
+    archivo: `${apiUrl}/gifs/grafico_barras_renovables.gif`,
+  },
+  {
+    nombre: "Participación de Energías Renovables",
+    archivo: `${apiUrl}/gifs/grafico_torta_renovables.gif`,
+  },
+  {
+    nombre: "Crecimiento de Energía Solar Global",
+    archivo: `${apiUrl}/gifs/grafico_area_renovables.gif`,
+  },
+  {
+    nombre: "Comparativa Global de Fuentes de Energía",
+    archivo: `${apiUrl}/gifs/grafico_lineas_renovables.gif`,
+  },
   ];
 
   const settings = {

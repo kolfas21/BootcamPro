@@ -26,7 +26,6 @@ dist/
 *.env
 
 # Archivos de salida
-*.gif
 *.png
 *.jpg
 *.mp4

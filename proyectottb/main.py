@@ -96,6 +96,20 @@ class GraficosInput(BaseModel):
     pais: str
     anio: int
 
+
+@app.get("/listar-graficos")
+def listar_graficos():
+    import os
+    directorio = "graficos_generados"
+    archivos = os.listdir(directorio)
+    return [
+        {
+            "nombre": archivo.replace(".gif", "").replace("_", " ").title(),
+            "archivo": f"/gifs/{archivo}"
+        }
+        for archivo in archivos if archivo.endswith(".gif")
+    ]
+
 @app.post("/generar-graficos")
 def generar_graficos(datos: GraficosInput):
     try:
