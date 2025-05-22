@@ -94,9 +94,7 @@ def calcular_renovable(datos: CalculoInput):
 @app.get("/generar-graficos")
 def generar_graficos():
     try:
-        output_path = os.path.join("D:\\TalentoTech\\Repos\\proyectottf\\public\\gifs\\")
-        os.makedirs(output_path, exist_ok=True)
-        generar_todos_los_graficos(output_path)
+        generar_graficos_animados(OUTPUT_DIR)
         return {"message": "Gráficos generados exitosamente."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
