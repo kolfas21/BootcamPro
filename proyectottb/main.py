@@ -17,7 +17,8 @@ app.add_middleware(
 )
 
 CSV_DIR = "csv"
-OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "public", "gifs")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DIR = os.path.join(BASE_DIR, "gifs")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 csv_files = {
@@ -91,10 +92,14 @@ def calcular_renovable(datos: CalculoInput):
         porcentaje_estimado=porcentaje
     )
 
-@app.get("/generar-graficos")
-def generar_graficos():
+class GraficosInput(BaseModel):
+    pais: str
+    anio: int
+
+@app.post("/generar-graficos")
+def generar_graficos(datos: GraficosInput):
     try:
-        generar_graficos_animados(OUTPUT_DIR)
+        generar_graficos_animados(datos.pais, datos.anio, OUTPUT_DIR)
         return {"message": "Gráficos generados exitosamente."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
