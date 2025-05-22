@@ -95,6 +95,25 @@ class GraficosInput(BaseModel):
     pais: str
     anio: int
 
+@app.post("/generar-graficos")
+def generar_graficos(datos: GraficosInput):
+    try:
+        generar_graficos_animados(datos.pais, datos.anio, OUTPUT_DIR)
+        return {"message": "Gráficos generados exitosamente."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@app.get("/graficos")
+def obtener_graficos():
+    archivos = os.listdir(OUTPUT_DIR)
+    graficos = []
+    for archivo in archivos:
+        if archivo.endswith(".gif"):
+            graficos.append({
+                "nombre": archivo.replace(".gif", "").replace("_", " ").title(),
+                "archivo": f"/gifs/{archivo}"
+            })
+    return graficos
+
 @app.get("/listar-graficos")
 def listar_graficos():
     directorio = OUTPUT_DIR
@@ -106,11 +125,3 @@ def listar_graficos():
         }
         for archivo in archivos if archivo.endswith(".gif")
     ]
-
-@app.post("/generar-graficos")
-def generar_graficos(datos: GraficosInput):
-    try:
-        generar_graficos_animados(datos.pais, datos.anio, OUTPUT_DIR)
-        return {"message": "Gráficos generados exitosamente."}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
